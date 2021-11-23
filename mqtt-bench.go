@@ -37,6 +37,7 @@ type ExecOptions struct {
 	UseDefaultHandler bool       // Subscriber個別ではなく、デフォルトのMessageHandlerを利用するかどうか
 	PreTime           int        // 実行前の待機時間(ms)
 	IntervalTime      int        // メッセージ毎の実行間隔時間(ms)
+	CleanSession 	  bool
 }
 
 // 認証設定
@@ -303,6 +304,7 @@ func Connect(id int, execOpts ExecOptions) MQTT.Client {
 	opts := MQTT.NewClientOptions()
 	opts.AddBroker(execOpts.Broker)
 	opts.SetClientID(clientId)
+	opts.SetCleanSession(execOpts.CleanSession)
 
 	if execOpts.Username != "" {
 		opts.SetUsername(execOpts.Username)
@@ -396,6 +398,7 @@ func main() {
 	preTime := flag.Int("pretime", 3000, "Pre wait time (ms)")
 	intervalTime := flag.Int("intervaltime", 0, "Interval time per message (ms)")
 	debug := flag.Bool("x", false, "Debug mode")
+	cleanSession := flag.Bool("clean-session", true, "Set client clean session")
 
 	flag.Parse()
 
@@ -478,6 +481,7 @@ func main() {
 	execOpts.UseDefaultHandler = *useDefaultHandler
 	execOpts.PreTime = *preTime
 	execOpts.IntervalTime = *intervalTime
+	execOpts.CleanSession = *cleanSession
 
 	Debug = *debug
 

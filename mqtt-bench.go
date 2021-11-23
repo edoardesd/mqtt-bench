@@ -6,6 +6,7 @@ import (
 	"crypto/x509"
 	"flag"
 	"fmt"
+	"math/rand"
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"io/ioutil"
 	"os"
@@ -299,7 +300,8 @@ func Connect(id int, execOpts ExecOptions) MQTT.Client {
 	// プロセスIDを利用して、IDを割り振る。
 	// mqttbench<プロセスIDの16進数値>-<クライアントの連番>
 	pid := strconv.FormatInt(int64(os.Getpid()), 16)
-	clientId := fmt.Sprintf("mqttbench%s-%d", pid, id)
+	rnd := rand.Intn(1000)
+	clientId := fmt.Sprintf("mqttbench%s-%d-%d", pid, rnd, id)
 
 	opts := MQTT.NewClientOptions()
 	opts.AddBroker(execOpts.Broker)
@@ -484,6 +486,7 @@ func main() {
 	execOpts.CleanSession = *cleanSession
 
 	Debug = *debug
+	rand.Seed(time.Now().UnixNano())
 
 	switch method {
 	case "pub":

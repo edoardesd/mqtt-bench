@@ -211,7 +211,7 @@ func SubscribeAllClient(clients []MQTT.Client, opts ExecOptions, param ...string
 		// the topic is set by the command line
 		// topic := fmt.Sprintf(opts.Topic+"/%d", id)
 		topic := opts.Topic
-		
+
 		results[id] = Subscribe(client, topic, opts.Qos)
 
 		// DefaultHandlerを利用する場合は、Subscribe個別のHandlerではなく、
@@ -270,7 +270,9 @@ func Subscribe(client MQTT.Client, topic string, qos byte) *SubscribeResult {
 	var handler MQTT.MessageHandler = func(client MQTT.Client, msg MQTT.Message) {
 		result.Count++
 		if Debug {
-			fmt.Printf("Received message : topic=%s, message=%s\n", msg.Topic(), msg.Payload())
+			// fmt.Printf("Received message : topic=%s, message=%s\n", msg.Topic(), msg.Payload())
+			fmt.Printf("Received message : topic=%s\n", msg.Topic()) // don't show payload
+
 		}
 	}
 

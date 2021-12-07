@@ -208,7 +208,8 @@ func SubscribeAllClient(clients []MQTT.Client, opts ExecOptions, param ...string
 		wg.Add(1)
 
 		client := clients[id]
-		topic := fmt.Sprintf(opts.Topic+"/%d", id)
+		// the topic is set by the command line
+		// topic := fmt.Sprintf(opts.Topic+"/%d", id)
 
 		results[id] = Subscribe(client, topic, opts.Qos)
 

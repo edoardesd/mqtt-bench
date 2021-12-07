@@ -210,7 +210,8 @@ func SubscribeAllClient(clients []MQTT.Client, opts ExecOptions, param ...string
 		client := clients[id]
 		// the topic is set by the command line
 		// topic := fmt.Sprintf(opts.Topic+"/%d", id)
-
+		topic := opts.Topic
+		
 		results[id] = Subscribe(client, topic, opts.Qos)
 
 		// DefaultHandlerを利用する場合は、Subscribe個別のHandlerではなく、

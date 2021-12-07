@@ -58,6 +58,11 @@ type ClientCertConfig struct {
 	ClientKeyFile  string // クライアント公開鍵ファイル
 }
 
+// function that returns a random boolean
+func rand_bool() bool {
+    return rand.Float32() < 0.5
+}
+
 // サーバ証明書用のTLS設定を生成する。
 //   serverCertFile : サーバ証明書のファイル
 func CreateServerTlsConfig(serverCertFile string) *tls.Config {
@@ -173,7 +178,8 @@ func PublishAllClient(clients []MQTT.Client, opts ExecOptions, param ...string) 
 				if Debug {
 					fmt.Printf("Publish : id=%d, count=%d, topic=%s\n", clientId, index, topic)
 				}
-				Publish(client, topic, opts.Qos, opts.Retain, message)
+				// Publish(client, topic, opts.Qos, opts.Retain, message)
+				Publish(client, topic, opts.Qos, rand_bool(), message) //add randomness in the retain message
 				totalCount++
 
 				if opts.IntervalTime > 0 {
@@ -310,7 +316,8 @@ func Connect(id int, execOpts ExecOptions) MQTT.Client {
 	opts := MQTT.NewClientOptions()
 	opts.AddBroker(execOpts.Broker)
 	opts.SetClientID(clientId)
-	opts.SetCleanSession(execOpts.CleanSession)
+	// opts.SetCleanSession(execOpts.CleanSession)
+	opts.SetCleanSession(rand_bool()) // add randomness in clean session
 
 	if execOpts.Username != "" {
 		opts.SetUsername(execOpts.Username)
@@ -389,6 +396,8 @@ func FileExists(filePath string) bool {
 }
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
+
 	broker := flag.String("broker", "tcp://{host}:{port}", "URI of MQTT broker (required)")
 	action := flag.String("action", "p|pub or s|sub", "Publish or Subscribe or Subscribe(with publishing) (required)")
 	qos := flag.Int("qos", 0, "MQTT QoS(0|1|2)")
